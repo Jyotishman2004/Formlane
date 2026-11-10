@@ -1,36 +1,48 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Formlane
 
-## Getting Started
+A simple, good-looking alternative to Google Forms. Build a form, style it however you like, share a link, and see the responses.
 
-First, run the development server:
+## Features
+
+- **Build:** 11 question types, required questions, reorder / copy / delete, and "show this question only if…" rules
+- **Design:** 20 themes, your own colors, fonts, logo, cover image, background, layout (all at once or one question at a time), box style and buttons, with a live preview
+- **Share:** a public link anyone can fill in, with no account, and progress saved if they close the tab
+- **Control:** close a form on a date, after a number of responses, or turn it off
+- **Responses:** summary charts, a searchable table, and download as CSV
+- **Accounts:** email sign-in; everyone sees only their own forms and responses
+
+## Run it
+
+You need Node.js 20+ and a free [Supabase](https://supabase.com) project.
 
 ```bash
+npm install
+cp .env.example .env.local   # then fill in your Supabase URL and publishable key
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000 (or the port shown in the terminal).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Database setup
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Create the tables, security rules and functions in your Supabase project by running the SQL in
+[`supabase/schema.sql`](supabase/schema.sql) (SQL Editor in the Supabase dashboard).
 
-## Learn More
+Notes:
 
-To learn more about Next.js, take a look at the following resources:
+- Free Supabase projects **pause after about a week of inactivity**. If the app shows "failed to fetch", open the project in the Supabase dashboard and restore it.
+- Supabase's built-in email only sends a few sign-in emails per hour. Connect your own email service before real users sign up.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## How it works
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `src/lib/store.ts` is the only file that talks to the database.
+- People filling in a form read it through `get_public_form()` and submit through `submit_response()`. Submitting is refused if the form is closed, off, or full.
+- Row level security makes sure signed-in users can only read and change their own forms and responses.
 
-## Deploy on Vercel
+## Scripts
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Command | What it does |
+|---|---|
+| `npm run dev` | Start the app for development |
+| `npm run build` | Build for production |
+| `npm run lint` | Check the code |
